@@ -4,7 +4,7 @@
 //
 // (c) 2010 karl@pitrich.com
 // (c) 2014 karl@pitrich.com
-//
+// 
 // Timer-based rotary encoder logic by Peter Dannegger
 // http://www.mikrocontroller.net/articles/Drehgeber
 // ----------------------------------------------------------------------------
@@ -45,21 +45,21 @@ public:
   typedef enum Button_e {
     Open = 0,
     Closed,
-
+    
     Pressed,
     Held,
     Released,
-
+    
     Clicked,
     DoubleClicked
-
+    
   } Button;
 
 public:
-  ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN = -1,
+  ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN = -1, 
                uint8_t stepsPerNotch = 1, bool active = LOW);
 
-  void service(void);
+  void service(void);  
   int16_t getValue(void);
 
 #ifndef WITHOUT_BUTTON
@@ -89,30 +89,37 @@ public:
     }
   }
 
-  const bool getAccelerationEnabled()
+  const bool getAccelerationEnabled() 
   {
     return accelerationEnabled;
   }
-
+    
+  void setAccelerationRange(const uint16_t range)
+  {
+      accelerationMax = range * 30;
+      accelerationInc = range / 4;
+      accelerationDec = range / 50;
+  }
+    
 private:
   const uint8_t pinA;
   const uint8_t pinB;
   const uint8_t pinBTN;
+  uint8_t steps;
   const bool pinsActive;
   volatile int16_t delta;
   volatile int16_t last;
-  uint8_t steps;
   volatile uint16_t acceleration;
-  bool accelerationEnabled;
+  volatile uint16_t accelerationMax;
+  volatile uint16_t accelerationInc;
+  volatile uint16_t accelerationDec;
 #if ENC_DECODER != ENC_NORMAL
   static const int8_t table[16];
 #endif
 #ifndef WITHOUT_BUTTON
   volatile Button button;
   bool doubleClickEnabled;
-  uint16_t keyDownTicks = 0;
-  uint8_t doubleClickTicks = 0;
-  unsigned long lastButtonCheck = 0;
+  bool accelerationEnabled;
 #endif
 };
 
